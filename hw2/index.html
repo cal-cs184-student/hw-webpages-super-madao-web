@@ -1,10 +1,25 @@
 <html>
 	<head>
 		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=default'></script>
-		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
 		<style>
 			h1 {
 				text-align: center;
+				color: #00B4FF;
+			}
+
+			h2 {
+				color: #00B4FF;
+			}
+
+			h3 {
+				color: #00B4FF;
+			}
+
+			a {
+				color: #00B4FF;
 			}
 
 			.container {
@@ -21,26 +36,27 @@
 			}
 
 			body {
-				font-family: 'Inter', sans-serif;
+				font-family: 'Open Sans', serif;
+				background-color: #15171e;
+				color: white;
 			}
 		</style>
 	</head>
 	<body>
 		<div class="container">
 		<h1>CS184/284A Spring 2025 Homework 2 Write-Up</h1>
-		<div style="text-align: center;">Names: </div>
+		<div style="text-align: center;">Annika Liu, Candice Yang</div>
 
 		<br>
 
-		Link to webpage: (TODO) <a href="https://cs184.eecs.berkeley.edu/sp25">cs184.eecs.berkeley.edu/sp25</a>
+		Link to webpage: <a href="https://cal-cs184-student.github.io/hw-webpages-super-madao-web/">https://cal-cs184-student.github.io/hw-webpages-super-madao-web/</a>
 
 		<br>
 		
-		Link to GitHub repository: (TODO) <a href="https://cs184.eecs.berkeley.edu/sp25">cs184.eecs.berkeley.edu/sp25</a>
+		Link to GitHub repository: <a href="https://github.com/cal-cs184-student/sp25-hw2-madao-kleta.git">https://github.com/cal-cs184-student/sp25-hw2-madao-kleta.git</a>
 
 		<figure>
 			<img src="teapot.png" alt="Teapot" style="width:50%"/>
-			<figcaption>You can add images with captions!</figcaption>
 		</figure>
 
 		<!--
@@ -53,36 +69,75 @@
 		<h2>Section I: Bezier Curves and Surfaces</h2>
 
 		<h3>Part 1: Bezier curves with 1D de Casteljau subdivision</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-		<p>Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a column in that row. You might find this useful for framing and showing your result images in an organized fashion.</p>
+		Given n control points and a parameter t, the de Casteljau algorithm allows us to find a point that lies on 
+		the Bezier curve constructed from the control points based on t. We do so by recursively 
+		finding intermediate control points at each level and finally arriving at the desired point. 
+		
+		We implemented this by iteratively calling the function BezierCurve::evaluateStep(). 
+		Every time it is called, we feed in the i-th level control points to get the i+1-th level control points. 
+		Within the function, we used the lerp equation (1 - t)p_i + (t)p_i+1 to find the intermediate point between 
+		given control points i and i + 1. 
+		
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
 				<td style="text-align: center;">
-				  <img src="teapot.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="Task1_lv0.png" width="400px"/>
+				  <figcaption>6 control points, level 0</figcaption>
 				</td>
 				<td style="text-align: center;">
-				  <img src="teapot.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="Task1_lv1.png" width="400px"/>
+				  <figcaption>6 control points, level 1</figcaption>
 				</td>
 			  </tr>
 			  <tr>
 				<td style="text-align: center;">
-				  <img src="teapot.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="Task1_lv2.png" width="400px"/>
+				  <figcaption>6 control points, level 2</figcaption>
 				</td>
 				<td style="text-align: center;">
-				  <img src="teapot.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="Task1_lv3.png" width="400px"/>
+				  <figcaption>6 control points, level 3</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="Task1_lv4.png" width="400px"/>
+				  <figcaption>6 control points, level 4</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="Task1_lv5.png" width="400px"/>
+				  <figcaption>6 control points, level 5</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="Task1_lv5_curve.png" width="400px"/>
+				  <figcaption>6 control points, level 5 with curve</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="Task1_diff_curve.png" width="400px"/>
+				  <figcaption>Slightly different curve</figcaption>
 				</td>
 			  </tr>
 			</table>
 		</div>
 
 		<h3>Part 2: Bezier surfaces with separable 1D de Casteljau</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		Given an m x n matrix of 3D coordinates, De Castlejau algorithm computes a points on a Bezier surface by 
+		being recursively applied to finding the points lying on the m different n - 1 degree Bezier curves and 
+		then interpolating the Bezier curve constructed from these points to find the final point that lies on 
+		the Bezier surface. In essence, the idea is analogous to constructing m Bezier curves that details one 
+		axis of the surface, and finally constructing another Bezier curve crossing the previous curves to determine 
+		the last axis of the surface. 
+		
+		I implemented this by first calling evaluate1D() m times on all the rows, calculating the points that lie on each 
+		Bezier curve constructed from the points of each row. Lastly I called evaluate1D() another time to find the point 
+		lying on the Bezier surface. 
+
+		<figure>
+			<img src="Task2.png" style="width:50%"/>
+		</figure>
 
 		<h2>Section II: Triangle Meshes and Half-Edge Data Structure</h2>
 

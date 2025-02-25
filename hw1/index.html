@@ -1,10 +1,21 @@
 <html>
 	<head>
 		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=default'></script>
-		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
 		<style>
 			h1 {
 				text-align: center;
+				color: #00B4FF;
+			}
+
+			h2 {
+				color: #00B4FF;
+			}
+
+			a {
+				color: #00B4FF;
 			}
 
 			.container {
@@ -21,26 +32,27 @@
 			}
 
 			body {
-				font-family: 'Inter', sans-serif;
+				font-family: 'Open Sans', serif;
+				background-color: #15171e;
+				color: white;
 			}
 		</style>
 	</head>
 	<body>
 		<div class="container">
 		<h1>CS184/284A Spring 2025 Homework 1 Write-Up</h1>
-		<div style="text-align: center;">Names: </div>
+		<div style="text-align: center;">Annika Liu, Candice Yang</div>
 
 		<br>
 
-		Link to webpage: (TODO) <a href="https://cs184.eecs.berkeley.edu/sp25">cs184.eecs.berkeley.edu/sp25</a>
+		Link to webpage: <a href="https://cal-cs184-student.github.io/hw-webpages-super-madao-web/">https://cal-cs184-student.github.io/hw-webpages-super-madao-web/</a>
 		
 		<br>
 
-		Link to GitHub repository: (TODO) <a href="https://cs184.eecs.berkeley.edu/sp25">cs184.eecs.berkeley.edu/sp25</a>
+		Link to GitHub repository: <a href="https://github.com/cal-cs184-student/sp25-hw1-supersuperkleta1.git">https://github.com/cal-cs184-student/sp25-hw1-supersuperkleta1.git</a>
 
 		<figure>
 			<img src="lion.jpg" alt="Lion" style="width:50%"/>
-			<figcaption>You can add images with captions!</figcaption>
 		</figure>
 
 		<!--
@@ -48,65 +60,159 @@
 		-->
 
 		<h2>Overview</h2>
-		Give a high-level overview of what you implemented in this homework. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the homework.
+		This homework walks us through the rasterization pipeline where we implemented from scratch functionalities allowing
+		different sampling methods, texel to pixel mapping, and antialiaing effects. 
+		us to 
 
 		<h2>Task 1: Drawing Single-Color Triangles</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		I first created a Vector2D object for all three coordinates and then sorted them based on descending y value. 
+		The three edges that I set in my rasterizer are: p0 -> p1, p1 -> p2, and p2 -> p1. 
+		According to triangle rules and the condition that p0.y >= p1.y >= p2.y, if p1.x < p2.x, then the left edges 
+		are p0 -> p1 and p1 -> p2. 
+		If not, then p2 -> p0 is a left edge. We store the info about which edges are left edges in a bool[]. 
+		Then we start going through every pixel in the bounding box of the triangle and applying the pointInTriangle test. 
+		Within the test, if the sample point lies on the edge, then we check if the edge is a horizontal edge or a left edge. 
+		If so, the point is included. If not, they are excluded. 
+		Depending on the result of bool pointInTriangle(), we decide to color the pixel or not. 
 
-		<p>Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a column in that row. You might find this useful for framing and showing your result images in an organized fashion.</p>
+		<figure>
+			<img src="Task1.png" style="width:50%"/>
+		</figure>
+		
+		<h2>Task 2: Antialiasing by Supersampling</h2>
+		The basic structure for the supersampling algorithm is to create a larger sample buffer based on 
+		the given sample rate and the dimension of the actual image. 
+		We multiply the x and y values for the given points in the rasterize triangle function by 
+		the same factor of sqrt(sample_rate) so they match with the new sample buffer. 
+		Then we go on to rasterize as usual. 
+		As for rasterize point and rasterize line, we simply have to enlarge the original point (rasterize line is 
+		based on rasterize point) to the new dimension of sample buffer and color the area into the same color as 
+		before so it remains the same color in the sample buffer. 
+		Supersample is useful for antialiasing in that it allows more sample points to be taken and therefore more precise 
+		capture of the given image. 
+
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
 				<td style="text-align: center;">
-				  <img src="lion.jpg" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="Task2_sr1.png" width="400px"/>
+				  <figcaption>Sampling Rate 1</figcaption>
 				</td>
 				<td style="text-align: center;">
-				  <img src="lion.jpg" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="Task2_sr4.png" width="400px"/>
+				  <figcaption>Sampling Rate 4</figcaption>
 				</td>
 			  </tr>
 			  <tr>
 				<td style="text-align: center;">
-				  <img src="lion.jpg" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-				<td style="text-align: center;">
-				  <img src="lion.jpg" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="Task2_sr16.png" width="400px"/>
+				  <figcaption>Sampling Rate 16</figcaption>
 				</td>
 			  </tr>
 			</table>
 		</div>
 		
-		<h2>Task 2: Antialiasing by Supersampling</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
 		<h2>Task 3: Transforms</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		I changed the color of the cubeman and tried to make it look like it is jumping and saying hi. 
+		I rotated the bottom two legs of the cubeman by -45 and 45 degrees each. 
+		I also rotated the rightmost arm by 90 degrees. 
+
+		<figure>
+			<img src="Task3.png" style="width:50%"/>
+		</figure>
 
 		<h2>Task 4: Barycentric coordinates</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		<figure>
+			<img src="Task4_Tri.png" style="width:50%"/>
+		</figure>
+
+		The barycentric coordinate of each vertex refers to the proportional distance from this vertex to a given point 
+		within the triangle. Thus, the barycentric coordinate of each vertex is a value between 0 and 1 
+		(if the given point is indeed within the triangle). We can use this barycentric value to 
+		interpolate values within the triangle as we need. For instance, we use it to interpolate 
+		the color value of each point within a triangle with defined colors at the three vertices. 
+		In the example image, the three vertices each have a distinct color. Depending on the 
+		position of the point within the triangle, we calculate a different proportion from the three vertices to 
+		get the color value we want for that point. We iterate this through every point within 
+		the triangle to interpolate the color over the whole area. 
+
+		<figure>
+			<img src="Task4_Wheel.png" style="width:50%"/>
+		</figure>
 
 		<h2>Task 5: "Pixel sampling" for texture mapping</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		Pixel sampling refers to the sampling practice of mapping a texture image onto a defined shape, 
+		much like how sampling works for presenting an image stored in the computer onto the display pixels 
+		for people to view, pixel sampling also samples from the texture to decide which pixel 
+		matches to which color. Nearest sampling refers to pixel sampling based on the closest texel 
+		from the given point. Bilinear sampling is based on interpolation of the 4 nearest neighbor 
+		texels from the given point to produce an averaged value. 
+
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="Task5_ns_sr1.png" width="400px"/>
+				  <figcaption>Nearest Sampling, Sampling Rate 1</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="Task5_ns_sr16.png" width="400px"/>
+				  <figcaption>Nearest Sampling, Sampling Rate 16</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="Task5_bs_sr1.png" width="400px"/>
+				  <figcaption>Bilinear Sampling, Sampling Rate 1</figcaption>
+				</td>
+				<td style="text-align: center;">
+					<img src="Task5_bs_sr16.png" width="400px"/>
+					<figcaption>Bilinear Sampling, Sampling Rate 16</figcaption>
+				  </td>
+			  </tr>
+			</table>
+		</div>
+
+		From the comparison we can see that sampling using bilinear pixel interpolation presents a smoother image than 
+		the nearest pixel. There will appear a great difference between the two if we focus on an image with a high 
+		frequency (i.e. a strong distinction between two color regions). How this edge in between is portrayed 
+		differently where bilinear pixel interpolation sampling will be much smoother than nearest pixel sampling. 
 
 		<h2>Task 6: "Level Sampling" with mipmaps for texture mapping</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		Level sampling is a part of the rasterization process to decide which level of resolution the texture of the 
+		image will be sampled upon. The levels start off at level 0, with the full resolution. As the levels increase, 
+		the dimension of the resolution decreases by a factor of 2. In this project, we implemented three options: 
+		level zero, nearest level, and interpolated level. For the first option, we just choose to sample at the texel spaces' 
+		full resolution. For nearest level sampling, we first calculate the float value of level based on the formulas given 
+		in class and then round this value to the nearest integer, applying this integer level to the sampling process. 
+		Lastly, for linear interpolation of the level, we again calculate the continuous float value for the level, but 
+		instead we interpolate the two colors values from floor(level) and ceil(level) depending on the weight of the 
+		level value. We use this value as the final texel to be sampled. 
 
-		<h2>(Optional) Task 7: Extra Credit - Draw Something Creative!</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-		<h2>Additional Notes (please remove)</h2>
-		<ul>
-			<li>You can also add code if you'd like as so: <code>code code code</code></li>
-			<li>If you'd like to add math equations, 
-				<ul>
-					<li>You can write inline equations like so: \( a^2 + b^2 = c^2 \)</li>
-					<li>You can write display equations like so: \[ a^2 + b^2 = c^2 \]</li>
-				</ul>
-			</li>
-		</ul>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="Task6_lz_pn.png" width="400px"/>
+				  <figcaption>L_ZERO, P_NEAREST sampling</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="Task6_lz_pl.png" width="400px"/>
+				  <figcaption>L_ZERO, P_LINEAR sampling</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="Task6_ln_pn.png" width="400px"/>
+				  <figcaption>L_NEAREST, P_NEAREST sampling</figcaption>
+				</td>
+				<td style="text-align: center;">
+					<img src="Task6_ln_pl.png" width="400px"/>
+					<figcaption>L_NEAREST, P_LINEAR sampling</figcaption>
+				  </td>
+			  </tr>
+			</table>
 		</div>
+
 	</body>
 </html>
