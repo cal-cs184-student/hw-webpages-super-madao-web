@@ -73,11 +73,12 @@
 		the Bezier curve constructed from the control points based on t. We do so by recursively 
 		finding intermediate control points at each level and finally arriving at the desired point. 
 		
-		We implemented this by iteratively calling the function BezierCurve::evaluateStep(). 
-		Every time it is called, we feed in the i-th level control points to get the i+1-th level control points. 
-		Within the function, we used the lerp equation (1 - t)p_i + (t)p_i+1 to find the intermediate point between 
+		We implemented this by iteratively calling the function <code>BezierCurve::evaluateStep()</code>. 
+		Every time it is called, we feed in the ith level control points to get the i+1th level control points. 
+		Within the function, we used the lerp equation <code>(1 - t)p_i + (t)p_i+1</code> to find the intermediate point between 
 		given control points i and i + 1. 
 		
+		<p></p>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
@@ -131,8 +132,8 @@
 		axis of the surface, and finally constructing another Bezier curve crossing the previous curves to determine 
 		the last axis of the surface. 
 		
-		I implemented this by first calling evaluate1D() m times on all the rows, calculating the points that lie on each 
-		Bezier curve constructed from the points of each row. Lastly I called evaluate1D() another time to find the point 
+		I implemented this by first calling <code>evaluate1D()</code> m times on all the rows, calculating the points that lie on each 
+		Bezier curve constructed from the points of each row. Lastly I called <code>evaluate1D()</code> another time to find the point 
 		lying on the Bezier surface. 
 
 		<figure>
@@ -142,13 +143,118 @@
 		<h2>Section II: Triangle Meshes and Half-Edge Data Structure</h2>
 
 		<h3>Part 3: Area-weighted vertex normals</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		I first created helper functions <code>findNeighborPoints()</code>, <code>findArea()</code>, <code>findNormal()</code>, 
+		and <code>findMagnitude()</code> to abstract the code with
+		object oriented programming principles. Within the <code>vertex::normal()</code> function, I first find all neighbor vertices,
+		storing them in clockwise order. In a for loop, I iterate through these neighbor vertices in pairs to find the area and normal
+		of the face constructed with the 3 vertices (the vertex we are finding the normal of, ith vertex, and i+1th vertex). We multiply
+		the area and normal of each face and then add these area weighted normals together. Lastly, we normalize the summed vector and
+		negate this vector to return, ensuring that the normal is pointing outwards, not inwards. 
+
+		<p></p>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="Task3_n_vn.png" width="400px"/>
+				  <figcaption>Without vertex normals</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="Task3_w_vn.png" width="400px"/>
+				  <figcaption>With vertex normals</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
 
 		<h3>Part 4: Edge flip</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		I first figured out the pointer bindings of each vertex, edge, face, and half edge before
+		and after an edge flip operation. Once I know where each half edge mesh element's pointers
+		should point to, I started implementation by first storing the Iter pointers for each mesh
+		element so it's easier to access them afterwards. I then rebinded the halfedgeIter pointers
+		of the vertex, edge, and face mesh elements to the appropriate halfedge after the edge flip. 
+		Lastly, I reassigned all of the halfedgeIter's vertex, edge, face, and twin pointers to the 
+		corresponding ones after an edge flip operation. 
+
+		<p></p>
+
+		The key of this implementation lies on the first step where we work out the correct rebindings
+		after the edge flip. I drew a diagram and a table comparing the pointer bindings of each 
+		mesh element before and after the edge flip to arrive at the correct result. 
+
+		<p></p>
+
+		An interesting implementation is how I got to overwrite the halfedgeIter pointers of the 
+		vertex, edge, and face mesh elements. Within each of these class, <code>_halfedge</code> is a protected
+		variable that we cannot directly tamper with. However, due to the nature of pointers in C++, 
+		I used <code>vertex->halfedge() = new halfedge pointer</code> to reassign what is stored in the 
+		pointer <code>_halfedge</code>. 
+
+		<p></p>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="Task4_n_flip.png" width="400px"/>
+				  <figcaption>Before edge flips</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="Task4_w_flip.png" width="400px"/>
+				  <figcaption>Before edge flips</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
 
 		<h3>Part 5: Edge split</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		The first step I did is to count the number of new vertices, edges, faces, and half edges
+		need to be created. Then I figured out what all the vertices', edges', faces', and half edges' 
+		(including both existing ones and new ones) pointers should bind to after the edge split 
+		and recorded this in a table. 
+
+		<p></p>
+
+		Then I started implementation by first storing the Iter pointers for each mesh
+		element so it's easier to access them afterwards. I then rebinded the halfedgeIter pointers
+		of the vertex, edge, and face mesh elements to the appropriate halfedge after the edge flip. 
+		Lastly, I reassigned all of the halfedgeIter's vertex, edge, face, and twin pointers to the 
+		corresponding ones after an edge flip operation. When creating the new vertex m, 
+		I also assigned the value <code>m->position</code> to the midpoint of the left vertex and 
+		the right vertex of the edge to be split upon. 
+
+		<p></p>
+
+		An interesting implementation is how I got to overwrite the halfedgeIter pointers of the 
+		vertex, edge, and face mesh elements. Within each of these class, <code>_halfedge</code> is a protected
+		variable that we cannot directly tamper with. However, due to the nature of pointers in C++, 
+		I used <code>vertex->halfedge() = new halfedge pointer</code> to reassign what is stored in the 
+		pointer <code>_halfedge</code>. 
+
+		<p></p>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="Task5_n_es.png" width="400px"/>
+				  <figcaption>Before edge splits</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="Task5_w_es.png" width="400px"/>
+				  <figcaption>After edge splits</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="Task5_n_esef.png" width="400px"/>
+				  <figcaption>Before edge splits and edge flips</figcaption>
+				</td>
+				<td style="text-align: center;">
+					<img src="Task5_w_esef.png" width="400px"/>
+					<figcaption>After edge splits and edge flips</figcaption>
+				  </td>
+			  </tr>
+			</table>
+		</div>
 
 		<h3>Part 6: Loop subdivision for mesh upsampling</h3>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
