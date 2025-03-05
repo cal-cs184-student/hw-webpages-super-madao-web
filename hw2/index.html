@@ -257,21 +257,128 @@
 		</div>
 
 		<h3>Part 6: Loop subdivision for mesh upsampling</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		We implemented loop subdivision by first processing the Vector3D newPosition stored in every old edge and vertex, using the formulaes given. 
+		We then split all the old edges and assign the newly created edges' and vertices' isNew flag to true in the <code>splitEdge()</code> function. 
+		In the splitedge function, we also check to see whether the newly created vertex's edge has a newPosition value stored. If so, we assign this value
+		as the position of the new vertex. If not, we assign this vertex's position to be the midpoint between the two endpoint vertices of the edge. 
+		<p></p>
+		Next, we iterate through all the edges. If we encounter an edge with <code>isNew == true</code>, we go on to check whether one of its vertices is
+		new and the other is not. If so, we flip the edge using <code>flipEdge()</code>. Finally, we go through all the vertices to find the old vertices 
+		and reassign their positions to be the value stored in <code>v->newPosition</code>.
+		<p></p>
+		In the process, we debugged using cout to print out the values of <code>v->position</code>, <code>v->newPosition</code>, and <code>e->newPosition</code> 
+		to check whether we assigned the values correctly. We also used the GUI to check the memory address of the vertices to check that they are not assigned
+		to default zero. 
+		<p></p>
+		<p></p>
+		As shown below, once we conduct more loop subdivisions, the sharp vertices appear to be much sharper than their neighbor edges. In this example
+		of the cube, it's evident that the edges around the vertices are all smoothened (upsampled) pretty averagely, while the vertices have a much higher
+		concentration of faces. We can alleviate this effect by pre-processing the edges before loop subdivision. Specifically, we can subdivide other edges
+		so the number of edges is more spread out and less concentrated around the vertices. This would result in ther vertices appearing smoother. 
+		<p></p>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="Task6_l1.png" width="400px"/>
+				  <figcaption>subdivision level 0</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="Task6_l2.png" width="400px"/>
+				  <figcaption>subdivision level 1</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="Task6_l3.png" width="400px"/>
+				  <figcaption>subdivision level 2</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="Task6_l4.png" width="400px"/>
+				  <figcaption>subdivision level 3</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="Task6_l5.png" width="400px"/>
+				  <figcaption>subdivision level 4</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="Task6_l6.png" width="400px"/>
+				  <figcaption>subdivision level 5</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
+
+		<p></p>
+		Other than the vertices appearing too pointy, the cube also appears to be asymmetric as we perform several iterations of loop subdivision. 
+		We also preprocess the edges by splitting them first before calling loop subdivision. This works because previously without edge splits, 
+		there is only one edge cutting through each face of the cube. Some of them are left-diagonal while some are right-diagonal, resulting in 
+		two of the vertices on the top and bottom face being pointed by two extra edges. This results in higher concentration of edges around these
+		two vertices, causing them to appear longer and less smoothened out than the other two vertices. 
+		<p></p>
+		After we preprocess the edges, now every vertex is pointed by an equal number of edges, allowing a symmetric appearance after iterations of 
+		loop subdivisions. 
+		<p></p>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="Task6_l1_ns.png" width="400px"/>
+				  <figcaption>Subdivision level 0, without edge split</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="Task6_l4_ns.png" width="400px"/>
+				  <figcaption>Subdivision level 3, without edge split</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="Task6_l1_ws.png" width="400px"/>
+				  <figcaption>Subdivision level 0, with edge split</figcaption>
+				</td>
+				<td style="text-align: center;">
+					<img src="Task6_l4_ws.png" width="400px"/>
+					<figcaption>Subdivision level 3, with edge split</figcaption>
+				  </td>
+			  </tr>
+			</table>
+		</div>
 
 		<h2>(Optional) Section III: Potential Extra Credit - Art Competition: Model something Creative</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		I built Shu from ArkNights! I used box modeling to model her after her character sheet. 
 
-		<h2>Additional Notes (please remove)</h2>
-		<ul>
-			<li>You can also add code if you'd like as so: <code>code code code</code></li>
-			<li>If you'd like to add math equations, 
-				<ul>
-					<li>You can write inline equations like so: \( a^2 + b^2 = c^2 \)</li>
-					<li>You can write display equations like so: \[ a^2 + b^2 = c^2 \]</li>
-				</ul>
-			</li>
-		</ul>
+		<p></p>
+		<figure>
+			<img src="shu.png" style="width:25%"/>
+			<figcaption>Shu from ArkNights</figcaption>
+		</figure>
+
+		<p></p>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="shu_l0.png" width="400px"/>
+				  <figcaption>Subdivision level 0, with wireframe</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="shu_l1.png" width="400px"/>
+				  <figcaption>Subdivision level 1, with wireframe</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="shu_l2.png" width="400px"/>
+				  <figcaption>Subdivision level 2, with wireframe</figcaption>
+				</td>
+				<td style="text-align: center;">
+					<img src="shu_nw.png" width="400px"/>
+					<figcaption>Subdivision level 2, without wireframe</figcaption>
+				  </td>
+			  </tr>
+			</table>
 		</div>
 	</body>
 </html>
