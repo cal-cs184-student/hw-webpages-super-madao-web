@@ -64,8 +64,12 @@
 		-->
 
 		<h2>Overview</h2>
-		Give a high-level overview of what you implemented in this homework. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the homework.
-
+		In this project, we implemented a mesh representation and geometry processing system, allowing us to draw curves in 2D, and upsample a given mesh in 3D. We achieved this 
+		by implementing the building blocks of the whole abstract system -- specifically, the key functions to find the Bezier curve, Bezier surface, 
+		apply area-weighted normal to every vertex, edge flip, edge split, and the final upsampling loop subdivision aglgorithm. 
+		It's really interesting knowing how the complex meshes we see in games and animations today are build from the halfEdge data structure, which is simple yet elegant. 
+		It's also fun comparing the system we built in this project with mature 3D engines such as Maya or Blender to see the complex addons they have done to the system. 
+	
 		<h2>Section I: Bezier Curves and Surfaces</h2>
 
 		<h3>Part 1: Bezier curves with 1D de Casteljau subdivision</h3>
