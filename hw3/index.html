@@ -190,13 +190,13 @@
         >
           <tr>
             <td style="text-align: center">
-              <img src="Part1_CBgems.png" width="400px" alt="CBgems" />
+              <img src="Part1_CBgems.png" width="300px" alt="CBgems" />
               <figcaption>CBgems</figcaption>
             </td>
             <td style="text-align: center">
               <img
                 src="Part1_CBspheres_microfacet_al_ag.png"
-                width="400px"
+                width="300px"
                 alt="CBspheres Microfacet AL AG"
               />
               <figcaption>CBspheres Microfacet AL AG</figcaption>
@@ -204,11 +204,11 @@
           </tr>
           <tr>
             <td style="text-align: center">
-              <img src="Part1_CBspheres.png" width="400px" alt="CBspheres" />
+              <img src="Part1_CBspheres.png" width="300px" alt="CBspheres" />
               <figcaption>CBspheres</figcaption>
             </td>
             <td style="text-align: center">
-              <img src="Part1_teapot.png" width="400px" alt="Teapot" />
+              <img src="Part1_teapot.png" width="300px" alt="Teapot" />
               <figcaption>Teapot</figcaption>
             </td>
           </tr>
@@ -216,13 +216,63 @@
       </div>
 
       <h2>Part 2: Bounding Volume Hierarchy</h2>
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-      tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-      veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-      commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-      velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-      cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-      est laborum.
+      <h3>
+        1. Walk through your BVH construction algorithm. Explain the heuristic
+        you chose for picking the splitting point.
+      </h3>
+
+      The algorithm recursively builds the BVH by first computing an overall
+      bounding box that encloses all primitives. If the number of primitives is
+      below the maximum leaf size, it creates a leaf node. Otherwise, it
+      computes a centroid bounding box of all primitives, selects the longest
+      axis (i.e., the axis with the maximum extent), and then chooses the split
+      point as the midpoint along that axis. <br />
+      The midpoint heuristic aims to balance the tree by roughly dividing the
+      primitives into two groups based on the position of their centroids. If
+      the partitioning is degenerate (all primitives fall on one side), the
+      algorithm defaults to splitting the set in half.
+
+      <h3>
+        Show images with normal shading for a few large .dae files that you can
+        only render with BVH acceleration.
+      </h3>
+
+      <div style="display: flex; flex-direction: column; align-items: center">
+        <table
+          style="width: 80%; text-align: center; border-collapse: collapse"
+        >
+          <tr>
+            <td style="text-align: center">
+              <img src="Part2_beast.png" width="300px" alt="Beast" />
+              <figcaption>Beast</figcaption>
+            </td>
+            <td style="text-align: center">
+              <img src="Part2_blob.png" width="300px" alt="Blob" />
+              <figcaption>Blob</figcaption>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center">
+              <img src="Part2_CBlucy.png" width="300px" alt="CBlucy" />
+              <figcaption>CBlucy</figcaption>
+            </td>
+            <td style="text-align: center" colspan="2">
+              <img src="Part2_wall-e.png" width="300px" alt="Wall-e" />
+              <figcaption>Wall-e</figcaption>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <h3>
+        Compare rendering times on a few scenes with moderately complex
+        geometries with and without BVH acceleration.
+      </h3>
+
+      For wall-e, with BVH, Building BVH from 240326 primitives takes 0.1627
+      sec, and rendering takes 0.0678 sec. With the same processor but without
+      BVH, rendering took 45 sec. All other renders above show a similar pattern
+      that BVH significantly speed up rendering.
 
       <h2>Part 3: Direct Illumination</h2>
       Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
