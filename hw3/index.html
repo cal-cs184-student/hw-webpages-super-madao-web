@@ -1,68 +1,72 @@
 <html>
   <head>
-		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=default'></script>
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
-		<style>
-			h1 {
-				text-align: center;
-				color: #00B4FF;
-			}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=default"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      h1 {
+        text-align: center;
+        color: #00b4ff;
+      }
 
-			h2 {
-				color: #00B4FF;
-			}
+      h2 {
+        color: #00b4ff;
+      }
 
-			h3 {
-				color: #00B4FF;
-			}
+      h3 {
+        color: #00b4ff;
+      }
 
-			a {
-				color: #00B4FF;
-			}
+      a {
+        color: #00b4ff;
+      }
 
-			.container {
-				margin: 0 auto;
-				padding: 60px 20%;
-			}
+      .container {
+        margin: 0 auto;
+        padding: 60px 20%;
+      }
 
-			figure {
-				text-align: center;
-			}
+      figure {
+        text-align: center;
+      }
 
-			img {
-				display: inline-block;
-			}
+      img {
+        display: inline-block;
+      }
 
-			body {
-				font-family: 'Open Sans', serif;
-				background-color: #15171e;
-				color: white;
-			}
-		</style>
-	</head>
+      body {
+        font-family: "Open Sans", serif;
+        background-color: #15171e;
+        color: white;
+      }
+    </style>
+  </head>
   <body>
     <div class="container">
       <h1>CS184/284A Spring 2025 Homework 3 Write-Up</h1>
       <div style="text-align: center">Annika Liu, Candice Yang</div>
 
       <br />
-
       <a href="https://cal-cs184-student.github.io/hw-webpages-super-madao-web/"
-        >Link</a> to webpage.
-      Link to GitHub repository:
-      <a href="https://github.com/cal-cs184-student/sp25-hw2-madao-kleta.git"
-        >github.com/cal-cs184-student/sp25-hw2-madao-kleta.git</a
+        >Link</a
       >
+      to webpage. <br />
+      <a href="https://github.com/cal-cs184-student/sp25-hw2-madao-kleta.git"
+        >Link</a
+      >
+      to GitHub repository.
 
       <figure>
         <img
           src="cornell.png"
           alt="Cornell Boxes with Bunnies"
-          style="width: 70%"
+          style="width: 100%"
         />
-        <figcaption></figcaption>
+        <figcaption>I am not a rabbit.🐇</figcaption>
       </figure>
 
       <!--
@@ -81,33 +85,71 @@
       </h3>
 
       <!-- Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. -->
-      The ray generation process begins in the camera class, specifically in the
-      Camera::generate_ray() function. Here's how it works: The function takes
-      normalized image coordinates (x, y) as input, where (0,0) corresponds to
-      the bottom-left corner of the image and (1,1) to the top-right corner.
-      These normalized coordinates are transformed to camera space. In camera
-      space, the camera is positioned at (0,0,0) and looks along the negative Z
-      axis. A virtual camera sensor is defined at z = -1, with dimensions
-      determined by the horizontal and vertical field of view angles (hFov and
-      vFov). The normalized image coordinates are mapped to points on this
-      sensor. A ray is created starting from the camera origin (0,0,0) and
-      passing through the calculated point on the sensor. This gives the ray
-      direction in camera space. Finally, the ray is transformed from camera
-      space to world space using the camera-to-world transformation matrix. Both
-      the ray origin and direction are transformed. The
-      PathTracer::raytrace_pixel() function then uses this ray generation
-      process to create rays for each pixel: For each pixel with coordinates (x,
-      y), it creates multiple sample rays (ns_aa samples) to perform
-      anti-aliasing. For each sample, it slightly perturbs the pixel coordinates
-      using a random sampler to generate rays that pass through different parts
-      of the pixel. It calls Camera::generate_ray() to create each ray. It
-      estimates the radiance along each ray and averages the results to get the
-      final pixel color. Once rays are generated, they need to be tested for
-      intersection with scene primitives (triangles and spheres). This is
-      implemented in the triangle and sphere classes as Triangle::intersect()and
-      Sphere::intersect() function. For both primitives, the functions also
-      update the ray's max_t value to the nearest intersection found so far,
-      which helps optimize future intersection tests.
+      <div>
+        <p>
+          The ray generation process begins in the camera class, specifically in
+          the <code>Camera::generate_ray()</code>
+          function. This function takes normalized image coordinates (x, y) as
+          input, where (0,0) represents the bottom-left corner and (1,1) the
+          top-right corner of the image.
+        </p>
+
+        <p>
+          These normalized coordinates are first transformed into camera space.
+          In camera space, the camera is located at (0,0,0) and faces along the
+          negative Z axis. A virtual camera sensor is set at
+          <code>z = -1</code>, with dimensions defined by the horizontal and
+          vertical field of view angles (<code>hFov</code> and
+          <code>vFov</code>).
+        </p>
+
+        <p>
+          The normalized coordinates are then mapped to points on the sensor,
+          and a ray is created starting at the camera origin (0,0,0) and passing
+          through the computed point. This defines the ray’s direction in camera
+          space. Finally, the ray is transformed from camera space to world
+          space using the camera-to-world transformation matrix, which updates
+          both its origin and its direction.
+        </p>
+
+        <p>
+          The <code>PathTracer::raytrace_pixel()</code> function leverages this
+          process to generate rays for each pixel:
+        </p>
+
+        <ol>
+          <li>
+            <strong>Ray Sampling:</strong> For each pixel with coordinates (x,
+            y), multiple sample rays (denoted by <code>ns_aa</code>
+            samples) are generated to implement anti-aliasing.
+          </li>
+          <li>
+            <strong>Perturbation:</strong> Each sample perturbs the pixel
+            coordinates slightly using a random sampler, ensuring that rays pass
+            through different parts of the pixel.
+          </li>
+          <li>
+            <strong>Ray Creation and Averaging:</strong> The
+            <code>Camera::generate_ray()</code> function is called for each
+            sample, and the radiance along each ray is estimated. These results
+            are then averaged to determine the final color of the pixel.
+          </li>
+        </ol>
+
+        <p>
+          Once the rays are generated, they are tested for intersection with
+          scene primitives (such as triangles and spheres). The intersection
+          tests are implemented in the triangle and sphere classes via the
+          <code>Triangle::intersect()</code> and
+          <code>Sphere::intersect()</code> functions.
+        </p>
+
+        <p>
+          In both cases, the functions update the ray’s
+          <code>max_t</code> property to the nearest intersection found, helping
+          to optimize subsequent intersection tests.
+        </p>
+      </div>
 
       <h3>
         2. Explain the triangle intersection algorithm you implemented in your
@@ -116,53 +158,58 @@
       <p>
         I used the lecture slide of Moller Trumbore Algorithm to implement the
         triangle intersection algorithm, which increases the efficiency of this
-        algorithm. 1. The algorithm first computes two edges of the triangle:
-        edge1 = p2 - p1 and edge2 = p3 - p1 2. It then calculates a vector pvec
-        by taking the cross product of the ray direction and edge2: pvec =
-        cross(r.d, edge2) 3. The determinant det = dot(edge1, pvec) is
-        calculated, which is proportional to the volume of the parallelpiped
-        formed by the ray direction and the two edges. If the determinant is
-        close to zero, the ray is parallel to the triangle plane, so there's no
-        intersection. 4. For valid intersections, barycentric coordinates (u, v)
-        are calculated: u = dot(tvec, pvec) * inv_det where tvec = r.o - p v =
-        dot(r.d, qvec) * inv_det where qvec = cross(tvec, edge1) 5. The
-        barycentric coordinates determine if the intersection point is inside
-        the triangle: The point is inside if u ≥ 0, v ≥ 0, and u + v ≤ 1.The
-        third barycentric coordinate w = 1 - u - v implicitly 6. The
-        intersection distance t along the ray is calculated as t = dot(edge2,
-        qvec) * inv_det. 7. Finally, for valid intersections, the algorithm
-        updates the ray's max_t value and, in the full intersection method, also
-        computes the interpolated normal at the intersection point using the
-        barycentric coordinates.
+        algorithm. <br />
+
+        1. The algorithm first computes two edges of the triangle: edge1 and
+        edge2. <br />
+        2. It then calculates a vector pvec by taking the cross product of the
+        ray direction and edge2. <br />
+        3. The determinant <code>det = dot(edge1, pvec)</code> is calculated,
+        which is proportional to the volume of the parallelpiped formed by the
+        ray direction and the two edges. If the determinant is close to zero,
+        the ray is parallel to the triangle plane, so there's no intersection.
+        <br />
+        4. For valid intersections, barycentric coordinates (u, v) are
+        calculated: u = dot(tvec, pvec) * inv_det where tvec = r.o - p v =
+        dot(r.d, qvec) * inv_det where qvec = cross(tvec, edge1) <br />
+        5. The barycentric coordinates determine if the intersection point is
+        inside third barycentric coordinate \(w = 1 - u - v\) implicitly. <br />
+        6. The intersection distance t along the ray is calculated as t =
+        dot(edge2, qvec) * inv_det. <br />
+        7. Finally, for valid intersections, the algorithm updates the ray's
+        max_t value and, in the full intersection method, also computes the
+        interpolated normal at the intersection point using the barycentric
+        coordinates. <br />
       </p>
-      <p>
-        Here is an example 2x2 gridlike structure using an HTML table. Each
-        <b>tr</b> is a row and each <b>td</b> is a column in that row. You might
-        find this useful for framing and showing your result images in an
-        organized fashion.
-      </p>
+
+      <h3>3. Images with normal shading for a few small .dae files.</h3>
+
       <div style="display: flex; flex-direction: column; align-items: center">
         <table
-          style="width: 100%; text-align: center; border-collapse: collapse"
+          style="width: 60%; text-align: center; border-collapse: collapse"
         >
           <tr>
             <td style="text-align: center">
-              <img src="cornell.png" width="400px" />
-              <figcaption>Caption goes here.</figcaption>
+              <img src="Part1_CBgems.png" width="400px" alt="CBgems" />
+              <figcaption>CBgems</figcaption>
             </td>
             <td style="text-align: center">
-              <img src="cornell.png" width="400px" />
-              <figcaption>Caption goes here.</figcaption>
+              <img
+                src="Part1_CBspheres_microfacet_al_ag.png"
+                width="400px"
+                alt="CBspheres Microfacet AL AG"
+              />
+              <figcaption>CBspheres Microfacet AL AG</figcaption>
             </td>
           </tr>
           <tr>
             <td style="text-align: center">
-              <img src="cornell.png" width="400px" />
-              <figcaption>Caption goes here.</figcaption>
+              <img src="Part1_CBspheres.png" width="400px" alt="CBspheres" />
+              <figcaption>CBspheres</figcaption>
             </td>
             <td style="text-align: center">
-              <img src="cornell.png" width="400px" />
-              <figcaption>Caption goes here.</figcaption>
+              <img src="Part1_teapot.png" width="400px" alt="Teapot" />
+              <figcaption>Teapot</figcaption>
             </td>
           </tr>
         </table>
