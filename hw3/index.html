@@ -74,9 +74,15 @@
 		-->
 
       <h2>Overview</h2>
-      Give a high-level overview of what you implemented in this homework. Think
-      about what you've built as a whole. Share your thoughts on what
-      interesting things you've learned from completing the homework.
+      In this project, we built a complete ray-tracing renderer from scratch that
+      generates camera rays, computes intersections for various primitives using
+      techniques like the Möller-Trumbore algorithm, and accelerates
+      computations with a hierarchical BVH structure. We implemented both direct
+      and indirect illumination—with direct lighting using hemisphere and
+      importance sampling and global illumination via recursive bounces with
+      Russian roulette—while also incorporating an adaptive sampling mechanism
+      that dynamically adjusts samples per pixel based on convergence criteria
+      to efficiently balance quality and performance.
 
       <h2>Part 1: Ray Generation and Scene Intersection</h2>
       <h3>
