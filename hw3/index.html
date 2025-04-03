@@ -454,16 +454,308 @@
 
       <h2>Part 4: Global Illumination</h2>
 
-      <h2>Part 5: Adaptive Sampling</h2>
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-      tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-      veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-      commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-      velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-      cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-      est laborum.
+      <h3>
+        Walk through your implementation of the indirect lighting function.
+      </h3>
+      <p>
+        In our implementation of <code>at_least_one_bounce_radiance</code>, we
+        combine direct and indirect lighting through recursion.
+      </p>
+      <ul>
+        <li>
+          <strong>Local Coordinate Setup:</strong> An orthonormal basis is
+          created at the intersection point using the surface normal, enabling
+          transformations between world and local space.
+        </li>
+        <li>
+          <strong>Direct Lighting:</strong> We compute immediate radiance using
+          <code>one_bounce_radiance</code>, which accounts for light arriving
+          directly at the surface.
+        </li>
+        <li>
+          <strong>Indirect Lighting:</strong> The BSDF is sampled to determine
+          an incoming light direction, and a Russian roulette strategy (with
+          probability 0.3) decides if further bounces should be computed.
+        </li>
+        <li>
+          <strong>Recursion:</strong> When an additional bounce is allowed and
+          an intersection is detected, the function calls itself recursively.
+          The returned radiance is weighted by the BSDF, a cosine factor, and
+          the pdf, then scaled by the Russian roulette probability.
+        </li>
+      </ul>
 
-      <h2>(Optional) Part 6: Extra Credit Opportunities</h2>
+      <h3>
+        Some images rendered with global (direct and indirect) illumination with
+        1024 samples per pixel.
+      </h3>
+      <div style="display: flex; flex-direction: column; align-items: center">
+        <table
+          style="width: 70%; text-align: center; border-collapse: collapse"
+        >
+          <tr>
+            <td style="text-align: center">
+              <img
+                src="Part4_2_1024s_spheres.png"
+                width="300px"
+                alt="1024 Samples - Spheres"
+              />
+              <figcaption>1024 Samples - Spheres</figcaption>
+            </td>
+            <td style="text-align: center">
+              <img
+                src="Part4_2_bunny.png"
+                width="300px"
+                alt="1024 Samples - Bunny"
+              />
+              <figcaption>1024 Samples - Bunny</figcaption>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <h3>
+        One scene and compare rendered views first with only direct
+        illumination, then only indirect illumination. Use 1024 samples per
+        pixel.
+      </h3>
+      <div style="display: flex; flex-direction: column; align-items: center">
+        <table
+          style="width: 70%; text-align: center; border-collapse: collapse"
+        >
+          <tr>
+            <td style="text-align: center">
+              <img
+                src="Part4_3_direct_bunny.png"
+                width="300px"
+                alt="Direct Illumination - Bunny"
+              />
+              <figcaption>Direct Illumination</figcaption>
+            </td>
+            <td style="text-align: center">
+              <img
+                src="Part4_3_indirect_bunny.png"
+                width="300px"
+                alt="Indirect Illumination - Bunny"
+              />
+              <figcaption>Indirect Illumination</figcaption>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <h3>max_ray_depth influence on the quality of the rendered image.</h3>
+      Render the mth bounce of light with max_ray_depth set to 0, 1, 2, 3, 4,
+      and 5 (the m flag), and isAccumBounces=false, using 1024 samples per
+      pixel.
+      <br />
+      In 2nd and 3rd bounces, the rendered image reaches higher quality and also
+      with less noise compared to rasterization. After that, the image quality
+      seems to converge.
+
+      <div style="display: flex; flex-direction: column; align-items: center">
+        <table
+          style="width: 70%; text-align: center; border-collapse: collapse"
+        >
+          <tr>
+            <td style="text-align: center">
+              <img
+                src="Part4_3_m0_o0_bunny.png"
+                width="200px"
+                alt="Max Ray Depth 0 (o0)"
+              />
+              <figcaption>Max Ray Depth 0 (isAccumBounces = false)</figcaption>
+            </td>
+            <td style="text-align: center">
+              <img
+                src="Part4_3_m1_o0_bunny.png"
+                width="200px"
+                alt="Max Ray Depth 1 (o1)"
+              />
+              <figcaption>Max Ray Depth 1 (isAccumBounces = false)</figcaption>
+            </td>
+            <td style="text-align: center">
+              <img
+                src="Part4_3_m2_o0_bunny.png"
+                width="200px"
+                alt="Max Ray Depth 2 (o1)"
+              />
+              <figcaption>Max Ray Depth 2 (isAccumBounces = false)</figcaption>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center">
+              <img
+                src="Part4_3_m3_o0_bunny.png"
+                width="200px"
+                alt="Max Ray Depth 3 (o1)"
+              />
+              <figcaption>Max Ray Depth 3 (isAccumBounces = false)</figcaption>
+            </td>
+            <td style="text-align: center">
+              <img
+                src="Part4_3_m4_o0_bunny.png"
+                width="200px"
+                alt="Max Ray Depth 4 (o1)"
+              />
+              <figcaption>Max Ray Depth 4 (isAccumBounces = false)</figcaption>
+            </td>
+            <td style="text-align: center">
+              <img
+                src="Part4_3_m5_o0_bunny.png"
+                width="200px"
+                alt="Max Ray Depth 5 (o1)"
+              />
+              <figcaption>Max Ray Depth 5 (isAccumBounces = false)</figcaption>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <br />
+      <br />
+      For accumulated bounces:
+      <br />
+      <br />
+
+      <div style="display: flex; flex-direction: column; align-items: center">
+        <table
+          style="width: 70%; text-align: center; border-collapse: collapse"
+        >
+          <tr>
+            <td style="text-align: center">
+              <img
+                src="Part4_3_m0_o1_bunny.png"
+                width="200px"
+                alt="Max Ray Depth 0 (o0)"
+              />
+              <figcaption>Max Ray Depth 0 (isAccumBounces = true)</figcaption>
+            </td>
+            <td style="text-align: center">
+              <img
+                src="Part4_3_m1_o1_bunny.png"
+                width="200px"
+                alt="Max Ray Depth 1 (o1)"
+              />
+              <figcaption>Max Ray Depth 1 (isAccumBounces = true)</figcaption>
+            </td>
+            <td style="text-align: center">
+              <img
+                src="Part4_3_m2_o1_bunny.png"
+                width="200px"
+                alt="Max Ray Depth 2 (o1)"
+              />
+              <figcaption>Max Ray Depth 2 (isAccumBounces = true)</figcaption>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center">
+              <img
+                src="Part4_3_m3_o1_bunny.png"
+                width="200px"
+                alt="Max Ray Depth 3 (o1)"
+              />
+              <figcaption>Max Ray Depth 3 (isAccumBounces = true)</figcaption>
+            </td>
+            <td style="text-align: center">
+              <img
+                src="Part4_3_m4_o1_bunny.png"
+                width="200px"
+                alt="Max Ray Depth 4 (o1)"
+              />
+              <figcaption>Max Ray Depth 4 (isAccumBounces = true)</figcaption>
+            </td>
+            <td style="text-align: center">
+              <img
+                src="Part4_3_m5_o1_bunny.png"
+                width="200px"
+                alt="Max Ray Depth 5 (o1)"
+              />
+              <figcaption>Max Ray Depth 5 (isAccumBounces = true)</figcaption>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <br />
+      <br />
+      For max_ray_depth=100 with Russian roulette (1024 samples per pixel):
+
+      <div style="display: flex; flex-direction: column; align-items: center">
+        <img
+          src="Part4_3_m100_bunny.png"
+          width="300px"
+          alt="Max Ray Depth 100 with Russian roulette"
+        />
+        <figcaption>
+          Max Ray Depth 100 with Russian roulette (1024 samples per pixel)
+        </figcaption>
+      </div>
+
+      <h3>Sample-per-pixel rates influence on render quality.</h3>
+      Pick one scene and compare rendered views with various sample-per-pixel
+      rates, including at least 1, 2, 4, 8, 16, 64, and 1024. Use 4 light rays.
+
+      <div style="display: flex; flex-direction: column; align-items: center">
+        <table
+          style="width: 70%; text-align: center; border-collapse: collapse"
+        >
+          <tr>
+            <td style="text-align: center">
+              <img
+                src="Part4_5_bunny_1_1.png"
+                width="200px"
+                alt="1 samples per pixel"
+              />
+              <figcaption>1 sample per pixel</figcaption>
+            </td>
+            <td style="text-align: center">
+              <img
+                src="Part4_5_bunny_1_4.png"
+                width="200px"
+                alt="4 samples per pixel"
+              />
+              <figcaption>4 samples per pixel</figcaption>
+            </td>
+            <td style="text-align: center">
+              <img
+                src="Part4_5_bunny_1_16.png"
+                width="200px"
+                alt="16 samples per pixel"
+              />
+              <figcaption>16 samples per pixel</figcaption>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center">
+              <img
+                src="Part4_5_bunny_1_64.png"
+                width="200px"
+                alt="64 samples per pixel"
+              />
+              <figcaption>64 samples per pixel</figcaption>
+            </td>
+            <td style="text-align: center">
+              <img
+                src="Part4_5_bunny_1_128.png"
+                width="200px"
+                alt="128 samples per pixel"
+              />
+              <figcaption>128 samples per pixel</figcaption>
+            </td>
+            <td style="text-align: center">
+              <img
+                src="Part4_5_bunny_1_1024.png"
+                width="200px"
+                alt="1024 samples per pixel"
+              />
+              <figcaption>1024 samples per pixel</figcaption>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <h2>Part 5: Adaptive Sampling</h2>
       Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
       tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
       veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
