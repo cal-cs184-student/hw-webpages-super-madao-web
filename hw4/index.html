@@ -1,10 +1,25 @@
 <html>
 	<head>
 		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=default'></script>
-		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
 		<style>
 			h1 {
 				text-align: center;
+				color: #00B4FF;
+			}
+
+			h2 {
+				color: #00B4FF;
+			}
+
+			h3 {
+				color: #00B4FF;
+			}
+
+			a {
+				color: #00B4FF;
 			}
 
 			.container {
@@ -21,26 +36,27 @@
 			}
 
 			body {
-				font-family: 'Inter', sans-serif;
+				font-family: 'Open Sans', serif;
+				background-color: #15171e;
+				color: white;
 			}
 		</style>
 	</head>
 	<body>
 		<div class="container">
 		<h1>CS184/284A Spring 2025 Homework 4 Write-Up</h1>
-		<div style="text-align: center;">Names: </div>
+		<div style="text-align: center;">Annika Liu, Candice Yang</div>
 
 		<br>
 
-		Link to webpage: (TODO) <a href="https://cs184.eecs.berkeley.edu/sp25">cs184.eecs.berkeley.edu/sp25</a>
+		Link to webpage: <a href="https://cal-cs184-student.github.io/hw-webpages-super-madao-web/">https://cal-cs184-student.github.io/hw-webpages-super-madao-web/</a>
 
 		<br>
 
-		Link to GitHub repository: (TODO) <a href="https://cs184.eecs.berkeley.edu/sp25">cs184.eecs.berkeley.edu/sp25</a>
+		Link to GitHub repository: <a href="https://github.com/cal-cs184-student/sp25-hw4-super-madao">https://github.com/cal-cs184-student/sp25-hw4-super-madao</a>
 
 		<figure>
 			<img src="clothsim.png" alt="Cloth draped over sphere" style="width:70%"/>
-			<figcaption>You can add images with captions!</figcaption>
 		</figure>
 
 		<!--
@@ -51,39 +67,168 @@
 		Give a high-level overview of what you implemented in this homework. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the homework.
 
 		<h2>Part 1: Masses and springs</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-		<p>Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a column in that row. You might find this useful for framing and showing your result images in an organized fashion.</p>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
 				<td style="text-align: center;">
-				  <img src="clothsim.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="part1_whole.png" width="400px"/>
+				  <figcaption>fully implmented mass-spring grid, view 1</figcaption>
 				</td>
 				<td style="text-align: center;">
-				  <img src="clothsim.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-			  </tr>
-			  <tr>
-				<td style="text-align: center;">
-				  <img src="clothsim.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-				<td style="text-align: center;">
-				  <img src="clothsim.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="part1_whole1.png" width="400px"/>
+				  <figcaption>fully implmented mass-spring grid, view 2</figcaption>
 				</td>
 			  </tr>
 			</table>
 		</div>
 
+		<p></p>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="part1_noShear.png" width="400px"/>
+				  <figcaption>mass-spring grid, without shearing constraints</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="part1_onlyShear.png" width="400px"/>
+				  <figcaption>mass-spring grid, with only shearing constraints</figcaption>
+				</td>
+				<td style="text-align: center;">
+					<img src="part1_full.png" width="400px"/>
+					<figcaption>mass-spring grid, with full constraints</figcaption>
+				  </td>
+			  </tr>
+			</table>
+		</div>
+
 		<h2>Part 2: Simulation via numerical integration</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		As we decrease the spring constant (ks), the cloth becomes less bouncy and wavy. 
+		This can be identified particularly when the cloth is falling and the lower half 
+		of it gets affected by each other's force. When we have a low sprint constant, 
+		for instance 50, the cloth doesn't really fluctuate. But as we increase the spring 
+		constant, there is an apparent increase in the frequency of fluctuations. This is 
+		intuitive given that the spring constant defines how much the spring constraint effect 
+		on each of the point mass. As spring constant increases, there are more force coming 
+		from neighbor point masses acting upon the point mass, resulting in more local 
+		fluctuations. 
+		<p></p>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="part2_pinned2_50ks.png" width="400px"/>
+				  <figcaption>pinned2.json, 50ks</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="part2_pinned2_5000ks.png" width="400px"/>
+				  <figcaption>pinned2.json, 5000ks (default)</figcaption>
+				</td>
+				<td style="text-align: center;">
+					<img src="part2_pinned2_10000ks.png" width="400px"/>
+					<figcaption>pinned2.json, 10000ks</figcaption>
+				  </td>
+			  </tr>
+			</table>
+		</div>
+		<p></p>
+		As density increases, we get more and smoother folds on the cloth. This can be 
+		identified when the cloth is falling, where the lower half of the cloth gets bended. 
+		When density factor is 1, we get a pretty angular and straight bend, and we get no 
+		fold at the top of the cloth. As density gets from 15 to 100, the big fold on the 
+		lower half of the cloth gets smoother, and gets accompanied by more neighbor folds. 
+		Similarly, the top half of the cloth gets more folds towards the center of the cloth. 
+		<p></p>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="part2_pinned2_1dens.png" width="400px"/>
+				  <figcaption>pinned2.json, density 1</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="part2_pinned2_15dens.png" width="400px"/>
+				  <figcaption>pinned2.json, density 15 (default)</figcaption>
+				</td>
+				<td style="text-align: center;">
+					<img src="part2_pinned2_100dens.png" width="400px"/>
+					<figcaption>pinned2.json, density 100</figcaption>
+				  </td>
+			  </tr>
+			</table>
+		</div>
+		<p></p>
+		The effect of damping is most identifiable when the cloth is falling back 
+		and begins to hang over. When damping is 0.0, the cloth swings widldly to the 
+		back, continuing this pattern of swinging back and forth with strong fluctuations 
+		on the cloth. As damping increases, the cloth is less and less influenced by the 
+		external force (i.e. gravity here), with close to none swinging back movements. 
+		The frequency of fluctuation and number of folds also decreases, as can be seen 
+		from the difference contrasting 0.2 damping and 0.7 damping effect. When damping 
+		gets to 1, the cloth just lays flat without any movement. This is understandable 
+		given that the damping coefficient controls how much the impact of force is 
+		diminished. The higher, the less affected the cloth is by all forces. 
+		<p></p>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="part2_pinned2_0damp.png" width="400px"/>
+				  <figcaption>pinned2.json, 0.0 damping</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="part2_pinned2_02damp.png" width="400px"/>
+				  <figcaption>pinned2.json, 0.2 damping (default)</figcaption>
+				</td>
+				<td style="text-align: center;">
+					<img src="part2_pinned2_07damp.png" width="400px"/>
+					<figcaption>pinned2.json, 0.7 damping</figcaption>
+				  </td>
+			  </tr>
+			</table>
+		</div>
+		<p></p> 
+
+		<figure>
+			<img src="part2_pinned4_shaded.png" alt="Cloth draped over sphere" style="width:60%"/>
+			<figcaption>pinned4.json, shaded</figcaption>
+		</figure>
 
 		<h2>Part 3: Handling collisions with other objects</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		The main logic with implementing collision handling is first detect whether collision 
+		occurred, then recalculate a corrected position, taking into account factors like 
+		friction and surface offset. 
+		<p></p>
+		For sphere collision, we detect collision by calculating the distance between 
+		pm.last_position and origin of the sphere. If this distance is greater than the sphere's 
+		radius, then we recalculate the tangent of intersection and rebind this, taking into 
+		effect of friction, to pm.position. 
+		<p></p>
+		For planes, collisions are detected by using the ray-plane intersection formula, 
+		finding the ray parameter t, then using this ray parameter to find the tangent of pm's 
+		ray (between pm.last_position and pm.position) and the plane. We then multiply the 
+		surface offset with the plane's normal and add it to tangent_position to include in 
+		surface offset. Lastly, we factor in friction when recalculating and reassignin 
+		pm.position. 
+		<p></p>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="part3_sphere_500ks.png" width="400px"/>
+				  <figcaption>sphere.json, 500 ks</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="part3_sphere_5000ks.png" width="400px"/>
+				  <figcaption>sphere.json, 5000 ks (default)</figcaption>
+				</td>
+				<td style="text-align: center;">
+					<img src="part3_sphere_50000ks.png" width="400px"/>
+					<figcaption>sphere.json, 50000 ks</figcaption>
+				  </td>
+			  </tr>
+			</table>
+		</div>
 
 		<h2>Part 4: Handling self-collisions</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
@@ -94,16 +239,6 @@
 		<h2>(Optional) Part 6: Extra Credit - Additional cloth simulation features!</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 		
-		<h2>Additional Notes (please remove)</h2>
-		<ul>
-			<li>You can also add code if you'd like as so: <code>code code code</code></li>
-			<li>If you'd like to add math equations, 
-				<ul>
-					<li>You can write inline equations like so: \( a^2 + b^2 = c^2 \)</li>
-					<li>You can write display equations like so: \[ a^2 + b^2 = c^2 \]</li>
-				</ul>
-			</li>
-		</ul>
 		</div>
 	</body>
 </html>
