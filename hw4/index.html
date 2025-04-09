@@ -64,7 +64,11 @@
 		-->
 
 		<h2>Overview</h2>
-		Give a high-level overview of what you implemented in this homework. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the homework.
+		In this project, we wrote a program that simulates cloth physics and motion through a system 
+		of point masses and springs. We then added complexity by implementing collision logic with 
+		self-collision and other collidable objects. Lastly, we created different shader models to 
+		shade the cloth: simple diffuse model, Blinn-Phong model, texture shader, bump and displacement 
+		mapping, and mirror shader. 
 
 		<h2>Part 1: Masses and springs</h2>
 		<div style="display: flex; flex-direction: column; align-items: center;">
@@ -190,7 +194,7 @@
 		<p></p> 
 
 		<figure>
-			<img src="part2_pinned4_shaded.png" alt="Cloth draped over sphere" style="width:60%"/>
+			<img src="part2_pinned4_shaded.png" style="width:50%"/>
 			<figcaption>pinned4.json, shaded</figcaption>
 		</figure>
 
@@ -211,6 +215,13 @@
 		surface offset. Lastly, we factor in friction when recalculating and reassignin 
 		pm.position. 
 		<p></p>
+		As spring constant (ks) increases, the cloth falling on the sphere is increasingly 
+		puffed up. When ks is 500, the cloth encloses the sphere almost vertically on the 
+		edges. When ks is increased to 50000, the cloth on the sides of the sphere are 
+		bumped up. This is understandable given that a higher spring constant would allow 
+		greater bouncy effect. In this case, the bounce is reflected on the cloth's bumped 
+		folds. 
+		<p></p>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
@@ -225,20 +236,210 @@
 				<td style="text-align: center;">
 					<img src="part3_sphere_50000ks.png" width="400px"/>
 					<figcaption>sphere.json, 50000 ks</figcaption>
-				  </td>
+				</td>
 			  </tr>
 			</table>
 		</div>
+		<p></p>
+
+		<figure>
+			<img src="part3_plane.png" style="width:50%"/>
+			<figcaption>plane.json, cloth lying flat</figcaption>
+		</figure>
 
 		<h2>Part 4: Handling self-collisions</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		1. hash_position is implemented by dividing the position of the point mass 
+		by length of the dimension's sides accordingly, and rounding it down to an 
+		integer. We now gets the coordinates of the 3D box that the point mass belongs 
+		to. We generate a unique number out of these coordinates by using a hashing trick 
+		commonly used in Java. i.e. <code>(x * 31 + y) * 31 + z</code>. 
+		<p></p>
+		2. self_collide is implemented by comparing pm against all other point masses in 
+		the same 3D box. For the candidate point masses that are too close to the pm, 
+		(i.e. having a distance less than <code>2 * thickness</code>), then we calculate 
+		the correction vector needed to be applied to pm to make the distance = 
+		<code>2 * thickness</code>. We sum up these correction vectors across potential 
+		candidate point masses, average it up, and divide by simulation_step to get 
+		the final correction_vector. Lastly we apply this correction vector to pm. 
+		<p></p>
+		3. checks for self_collision is implemented in <code>Cloth::simulate()</code> 
+		where we first call <code>build_spatial_map()</code>, then iterate through 
+		every point mass stored in point_masses, calling <code>self_collide()</code> 
+		on the pm. 
+		<p></p>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="part4_start.png" width="400px"/>
+				  <figcaption>starting to fall</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="part4_mid.png" width="400px"/>
+				  <figcaption>In the middle of falling</figcaption>
+				</td>
+				<td style="text-align: center;">
+					<img src="part4_end.png" width="400px"/>
+					<figcaption>finished falling</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
+		<p></p>
+		When we increase the spring constant (ks), we can see from the images 
+		that the cloth increasingly gets smoother as it unfolds on the ground. 
+		When ks is 500, there are many unnatural bumps and wrinkles on the cloth. When 
+		we increase ks to 5000, it appears more natural with parts lying on the ground 
+		flatter and twisted parts more wrinkled. When ks gets to 50000, the whole 
+		cloth is smoothened, as if the material of the cloth has gotten stronger and 
+		firmer, with almost no wrinkles. This is because a higher spring constant allows 
+		the spring between each point to be more bouncy, allowing for smoother curves. 
+		<p></p>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="part4_500ks.png" width="400px"/>
+				  <figcaption>selfCollision.json, 500 ks</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="part4_5000ks.png" width="400px"/>
+				  <figcaption>selfCollision.json, 5000 ks (default)</figcaption>
+				</td>
+				<td style="text-align: center;">
+					<img src="part4_50000ks.png" width="400px"/>
+					<figcaption>selfCollision.json, 50000 ks</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
+		<p></p>
+		As density increases, for instance from 1 to 100, the mass of the cloth 
+		also increases accordingly. On the left, when density is 1, the cloth appears 
+		very light-weighted and thin, characterized by its smooth folds. When density 
+		gets to 15, we start to see some wrinkles at the middle of the cloth with 
+		more weight. When density is 100, the cloth appears really thick, with its 
+		layers lying upon each other and interacting with each other to form heavy 
+		folds and wrinkles. This is due to the cloth's increased mass, which also increases 
+		the force of each point mass that pulls on each other. 
+		<p></p>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="part4_1dens.png" width="400px"/>
+				  <figcaption>selfCollision.json, density 1</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="part4_15dens.png" width="400px"/>
+				  <figcaption>selfCollision.json, density 15 (default)</figcaption>
+				</td>
+				<td style="text-align: center;">
+					<img src="part4_100dens.png" width="400px"/>
+					<figcaption>selfCollision.json, density 100</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
+		<p></p>
+		
 
 		<h2>Part 5: Shaders</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		A shader program uses algorithms, math, and calculations to determine the color displayed 
+		in each pixel. Usually, a vertex shader and a fragment shader works together to calculate 
+		the final pixel to be displayed onto our screen. A vertex shader determines all related 
+		parameters of the vertex. The output of each vertex shader is then interpolated by a 
+		rasterizer to generate values accordingly to the given parameters to each fragment (~pixel). 
+		A fragment shader then decides, based on the inputted information, what to color in each 
+		pixel. 
+		<p></p>
+		In hw4, we mainly passed the vertex position and normal information for fragment. We then 
+		implemented different fragment shaders to achieve different rendering results. We can add 
+		lighting and material effects through the fragment shader, mainly by using vector mathematics, 
+		and customized add-on variables, such as a bump/displacement map, or a texture map. 
+		<p></p>
+		Blinn-Phong is a shading model that simulates real-life lighting effects by calculating 
+		ambient light, diffuse light, and specular light separately and layering them together to create 
+		a complex effect. Ambient light is a lighting cast upon the object, giving it a coherent tone. 
+		As in the rendering below, ambient light only colors the object in the given one color. Diffuse 
+		light determines shadow, based on the given diffuse calculation model. In the image below, 
+		diffuse light adds darker shadows near the folds of the cloth. Lastly, specular light adds highlight 
+		to the model. As in the image, it only lights up the area of the sphere which is directly litten 
+		by the light source. 
+		<p></p>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="part5_ambient.png" width="400px"/>
+				  <figcaption>ambient shading</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="part5_diffuse.png" width="400px"/>
+				  <figcaption>diffuse shading</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="part5_specular.png" width="400px"/>
+				  <figcaption>specular shading</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="part5_entirePhong.png" width="400px"/>
+				  <figcaption>Blinn-Phong shading</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
+		<p></p>
 
-		<h2>(Optional) Part 6: Extra Credit - Additional cloth simulation features!</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-		
+		<figure>
+			<img src="part5_texture.png" style="width:50%"/>
+			<figcaption>texture shading</figcaption>
+		</figure>
+
+		<p></p>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="part5_bump.png" width="400px"/>
+				  <figcaption>shading with bump map</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="part5_displace.png" width="400px"/>
+				  <figcaption>shading with displacement</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="part5_16bump.png" width="400px"/>
+				  <figcaption>shading with bump map, 16 x 16</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="part5_16displace.png" width="400px"/>
+				  <figcaption>shading with displacement, 16 x 16</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="part5_128bump.png" width="400px"/>
+				  <figcaption>shading with bump map, 128 x 128</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="part5_128displace.png" width="400px"/>
+				  <figcaption>shading with displacement, 128 x 128</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
+		<p></p>
+
+		<figure>
+			<img src="part5_mirror.png" style="width:50%"/>
+			<figcaption>mirror shading</figcaption>
+		</figure>
+
 		</div>
 	</body>
 </html>
